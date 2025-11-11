@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>智能理财炒股 Agent - 可视化面板</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>智能理财炒股 Agent</h1>
+    <p class="subtitle">基于 Alpha Vantage + 本地 Qwen2.5（可选）</p>
+
+    <form id="queryForm">
+      <label for="symbolInput">股票代码（如 AAPL、MSFT）:</label>
+      <input id="symbolInput" name="symbol" type="text" value="{{ default_symbol }}" required>
+      <button type="submit">查询并分析</button>
+    </form>
+
+    <div id="status" class="status"></div>
+
+    <div class="content-grid">
+      <div class="panel">
+        <h2>价格走势图</h2>
+        <canvas id="priceChart"></canvas>
+      </div>
+
+      <div class="panel">
+        <h2>价格概况</h2>
+        <pre id="summaryBox">暂无数据</pre>
+      </div>
+
+      <div class="panel full-width">
+        <h2>智能分析（Qwen）{% if not llm_enabled %}<span class="tag tag-off">未启用</span>{% else %}<span class="tag tag-on">已启用</span>{% endif %}</h2>
+        <pre id="analysisBox">如果在 config.yaml 中开启 llm.enable=true，并正确配置 Ollama + qwen2.5，这里会显示大模型生成的中文分析。</pre>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

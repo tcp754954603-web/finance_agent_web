@@ -1,0 +1,14 @@
+alpha_vantage:
+  api_key: "KFPJ21I3JLLPHKKU"
+  base_url: "https://www.alphavantage.co/query"
+
+llm:
+  enable: true
+  model_name: "qwen2.5:7b"
+
+default_symbol: "AAPL"
+
+server:
+  host: "127.0.0.1"
+  port: 5000
+  debug: true

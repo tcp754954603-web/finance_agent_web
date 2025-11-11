@@ -1,0 +1,6 @@
+flask
+requests
+pandas
+pyyaml
+langchain
+langchain-ollama
