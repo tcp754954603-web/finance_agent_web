@@ -4,3 +4,15 @@ pandas
 pyyaml
 langchain
 langchain-ollama
+yfinance
+numpy
+scipy
+plotly
+dash
+dash-bootstrap-components
+sqlalchemy
+apscheduler
+websockets
+flask-socketio
+ta
+mplfinance

@@ -2,41 +2,147 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>智能理财炒股 Agent - 可视化面板</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>智能理财炒股 Agent - 专业版</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='enhanced_style.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>智能理财炒股 Agent</h1>
-    <p class="subtitle">基于 Alpha Vantage + 本地 Qwen2.5（可选）</p>
+    <header class="header">
+      <h1>🚀 智能理财炒股 Agent</h1>
+      <p class="subtitle">专业级股票分析平台 - 技术分析 + AI智能推理</p>
+    </header>
 
-    <form id="queryForm">
-      <label for="symbolInput">股票代码（如 AAPL、MSFT）:</label>
-      <input id="symbolInput" name="symbol" type="text" value="{{ default_symbol }}" required>
-      <button type="submit">查询并分析</button>
-    </form>
+    <div class="control-panel">
+      <form id="queryForm" class="query-form">
+        <div class="form-group">
+          <label for="symbolInput">股票代码:</label>
+          <input id="symbolInput" name="symbol" type="text" value="{{ default_symbol }}" 
+                 placeholder="如: AAPL, TSLA, NVDA" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="periodSelect">时间周期:</label>
+          <select id="periodSelect" name="period">
+            <option value="1d">1天</option>
+            <option value="5d">5天</option>
+            <option value="1mo" selected>1个月</option>
+            <option value="3mo">3个月</option>
+            <option value="6mo">6个月</option>
+            <option value="1y">1年</option>
+            <option value="2y">2年</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="intervalSelect">数据间隔:</label>
+          <select id="intervalSelect" name="interval">
+            <option value="1m">1分钟</option>
+            <option value="5m">5分钟</option>
+            <option value="15m">15分钟</option>
+            <option value="1h">1小时</option>
+            <option value="1d" selected>1天</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="analysisSelect">分析类型:</label>
+          <select id="analysisSelect" name="analysis_type">
+            <option value="quick" selected>快速分析</option>
+            <option value="technical">技术分析</option>
+            <option value="full">完整AI分析</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="btn-primary">🔍 分析股票</button>
+      </form>
+    </div>
 
     <div id="status" class="status"></div>
 
-    <div class="content-grid">
-      <div class="panel">
-        <h2>价格走势图</h2>
-        <canvas id="priceChart"></canvas>
-      </div>
-
-      <div class="panel">
-        <h2>价格概况</h2>
-        <pre id="summaryBox">暂无数据</pre>
-      </div>
-
-      <div class="panel full-width">
-        <h2>智能分析（Qwen）{% if not llm_enabled %}<span class="tag tag-off">未启用</span>{% else %}<span class="tag tag-on">已启用</span>{% endif %}</h2>
-        <pre id="analysisBox">如果在 config.yaml 中开启 llm.enable=true，并正确配置 Ollama + qwen2.5，这里会显示大模型生成的中文分析。</pre>
+    <!-- 市场概览 -->
+    <div class="market-overview" id="marketOverview">
+      <h3>📊 市场概览</h3>
+      <div class="indices-grid" id="indicesGrid">
+        <div class="loading">加载中...</div>
       </div>
     </div>
+
+    <!-- 主要内容区域 -->
+    <div class="content-grid">
+      <!-- 股票基本信息 -->
+      <div class="panel stock-info">
+        <h2>📈 股票信息</h2>
+        <div id="stockInfoBox" class="info-content">
+          <div class="loading">请输入股票代码进行查询</div>
+        </div>
+      </div>
+
+      <!-- 价格走势图 -->
+      <div class="panel chart-panel">
+        <h2>📊 价格走势</h2>
+        <div class="chart-container">
+          <canvas id="priceChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 技术指标图 -->
+      <div class="panel chart-panel">
+        <h2>📈 技术指标</h2>
+        <div class="indicator-tabs">
+          <button class="tab-btn active" data-indicator="rsi">RSI</button>
+          <button class="tab-btn" data-indicator="macd">MACD</button>
+          <button class="tab-btn" data-indicator="volume">成交量</button>
+        </div>
+        <div class="chart-container">
+          <canvas id="indicatorChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 技术分析摘要 -->
+      <div class="panel">
+        <h2>🔍 技术分析</h2>
+        <div id="technicalSummary" class="analysis-content">
+          <div class="loading">暂无技术分析数据</div>
+        </div>
+      </div>
+
+      <!-- 交易信号 -->
+      <div class="panel">
+        <h2>⚡ 交易信号</h2>
+        <div id="tradingSignals" class="signals-content">
+          <div class="loading">暂无交易信号</div>
+        </div>
+      </div>
+
+      <!-- AI智能分析 -->
+      <div class="panel full-width ai-analysis">
+        <h2>🤖 AI智能分析 
+          {% if not llm_enabled %}
+            <span class="tag tag-off">未启用</span>
+          {% else %}
+            <span class="tag tag-on">已启用</span>
+          {% endif %}
+        </h2>
+        <div id="analysisBox" class="analysis-content">
+          <div class="placeholder">
+            {% if llm_enabled %}
+              请选择股票进行AI分析
+            {% else %}
+              如需启用AI分析，请在 config.yaml 中设置 llm.enable=true，并确保 Ollama 服务正在运行
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <p>⚠️ 投资有风险，决策需谨慎。本工具仅供参考，不构成投资建议。</p>
+    </footer>
   </div>
 
-  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  <script src="{{ url_for('static', filename='enhanced_app.js') }}"></script>
 </body>
 </html>

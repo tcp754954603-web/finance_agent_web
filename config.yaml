@@ -1,14 +1,14 @@
 alpha_vantage:
-  api_key: "KFPJ21I3JLLPHKKU"
+  api_key: ""  # 留空使用免费Yahoo Finance，或填入您的API密钥
   base_url: "https://www.alphavantage.co/query"
 
 llm:
-  enable: true
+  enable: false  # 设为true启用AI分析（需要安装Ollama）
   model_name: "qwen2.5:7b"
 
-default_symbol: "AAPL"
+default_symbol: "AAPL"  # 可改为您关注的股票代码
 
 server:
-  host: "127.0.0.1"
-  port: 5000
-  debug: true
+  host: "0.0.0.0"  # 允许外部访问
+  port: 12000      # 使用12000端口
+  debug: false     # 生产环境关闭调试

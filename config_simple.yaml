@@ -1,0 +1,18 @@
+# 简化配置 - 适合快速开始使用
+
+# 不需要API密钥，使用免费的Yahoo Finance数据
+alpha_vantage:
+  api_key: ""  # 留空，系统会使用Yahoo Finance
+
+# 关闭AI功能，使用技术分析
+llm:
+  enable: false
+
+# 您喜欢的默认股票
+default_symbol: "AAPL"
+
+# 服务器设置
+server:
+  host: "0.0.0.0"
+  port: 12000
+  debug: false
